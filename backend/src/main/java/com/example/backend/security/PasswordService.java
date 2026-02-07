@@ -1,4 +1,4 @@
-package main.java.com.example.backend.security;
+package com.example.backend.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

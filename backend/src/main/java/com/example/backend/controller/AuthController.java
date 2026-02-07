@@ -1,14 +1,23 @@
-package main.java.com.example.backend.controller;
+package com.example.backend.controller;
 
-import com.example.backend.dto.*;
-import com.example.backend.entity.User;
-import com.example.backend.service.AuthService;
-import com.example.backend.security.TokenProvider;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.backend.dto.AuthResponse;
+import com.example.backend.dto.LoginRequest;
+import com.example.backend.dto.RefreshTokenRequest;
+import com.example.backend.dto.RegisterRequest;
+import com.example.backend.entity.User;
+import com.example.backend.security.TokenProvider;
+import com.example.backend.service.AuthService;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthController {
 
     private final AuthService authService;
@@ -38,12 +47,8 @@ public class AuthController {
     // ------------------------
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        String accessToken = authService.authenticate(request.getUsernameOrEmail(), request.getPassword());
-        String refreshToken = tokenProvider.generateRefreshToken(authService.userRepository.findByUsernameOrEmail(
-                request.getUsernameOrEmail(), request.getUsernameOrEmail()).get()
-        );
-
-        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     // ------------------------

@@ -1,20 +1,25 @@
-package main.java.com.example.backend.security;
+package com.example.backend.security;
 
-import com.example.backend.entity.Token;
-import com.example.backend.entity.User;
-import com.example.backend.repository.TokenRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.stereotype.Component;
-
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
+import com.example.backend.entity.Token;
+import com.example.backend.entity.User;
+import com.example.backend.repository.TokenRepository;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 @Component
 public class TokenProvider {
 
-    private final String jwtSecret = "super-secret-key"; // replace with env var
+    // Minimum 64 bytes (>= 512 bits) for HS512
+    private final String jwtSecret = "this-is-a-very-long-secret-for-hs512-keep-it-safe-0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // TODO: move to application.properties
     private final TokenRepository tokenRepository;
 
     public TokenProvider(TokenRepository tokenRepository) {
@@ -23,11 +28,12 @@ public class TokenProvider {
 
     // Generate JWT access token
     public String generateAccessToken(User user) {
+        var key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 min
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 

@@ -1,10 +1,11 @@
-package main.java.com.example.backend.service;
+package com.example.backend.service;
 
-import com.example.backend.entity.User;
-import com.example.backend.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.backend.entity.User;
+import com.example.backend.repository.UserRepository;
 
 @Service
 public class UserService {
