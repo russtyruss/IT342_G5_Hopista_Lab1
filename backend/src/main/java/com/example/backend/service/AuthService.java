@@ -1,14 +1,17 @@
-package main.java.com.example.backend.service;
+package com.example.backend.service;
 
-import com.example.backend.entity.User;
-import com.example.backend.repository.UserRepository;
-import com.example.backend.repository.TokenRepository;
-import com.example.backend.security.TokenProvider;
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.example.backend.dto.AuthResponse;
+import com.example.backend.dto.LoginRequest;
+import com.example.backend.entity.User;
+import com.example.backend.repository.TokenRepository;
+import com.example.backend.repository.UserRepository;
+import com.example.backend.security.TokenProvider;
 
 @Service
 public class AuthService {
@@ -61,6 +64,27 @@ public class AuthService {
         String refreshToken = tokenProvider.generateRefreshToken(user);
 
         return accessToken; // you can return both tokens in a DTO if you like
+    }
+
+    // ------------------------
+    // Authenticate and issue both tokens
+    // ------------------------
+    public AuthResponse login(LoginRequest request) {
+        Optional<User> optionalUser = userRepository.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail());
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Invalid username/email or password");
+        }
+
+        User user = optionalUser.get();
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid username/email or password");
+        }
+
+        String accessToken = tokenProvider.generateAccessToken(user);
+        String refreshToken = tokenProvider.generateRefreshToken(user);
+
+        return new AuthResponse(accessToken, refreshToken);
     }
 
     // ------------------------
