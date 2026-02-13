@@ -15,12 +15,11 @@ const RequireAuth = ({ children }) => {
 // Layout inside Router so it re-renders on navigation
 const AppShell = () => {
     const location = useLocation();
-    const authed = Boolean(localStorage.getItem("accessToken"));
     return (
         <div data-route={location.pathname}>
-            {authed && <Navbar />}
+            <Navbar />
             <Routes>
-                <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />

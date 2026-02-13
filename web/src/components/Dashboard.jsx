@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const decodeJwt = (token) => {
     try {
@@ -18,18 +18,17 @@ const decodeJwt = (token) => {
 };
 
 const Dashboard = () => {
-    const navigate = useNavigate();
     const [username, setUsername] = useState("");
 
     useEffect(() => {
         const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-            navigate("/login", { replace: true });
-            return;
+        if (accessToken) {
+            const payload = decodeJwt(accessToken);
+            setUsername(payload?.sub || "");
+        } else {
+            setUsername("");
         }
-        const payload = decodeJwt(accessToken);
-        setUsername(payload?.sub || "");
-    }, [navigate]);
+    }, []);
 
     return (
         <main style={{ maxWidth: 800, margin: "24px auto", padding: "0 16px" }}>

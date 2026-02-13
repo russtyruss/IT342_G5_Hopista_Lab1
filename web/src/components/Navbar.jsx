@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { clearTokens } from "../config/axios";
 
@@ -21,32 +21,9 @@ const decodeJwt = (token) => {
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const [isAuthed, setIsAuthed] = useState(false);
-    const [username, setUsername] = useState("");
-
-    const updateAuthState = () => {
-        const accessToken = localStorage.getItem("accessToken");
-        const authed = Boolean(accessToken);
-        setIsAuthed(authed);
-        if (authed) {
-            const payload = decodeJwt(accessToken);
-            const name = payload?.sub || "";
-            setUsername(name);
-        } else {
-            setUsername("");
-        }
-    };
-
-    useEffect(() => {
-        updateAuthState();
-        const onStorage = (e) => {
-            if (e.key === "accessToken" || e.key === "refreshToken") {
-                updateAuthState();
-            }
-        };
-        window.addEventListener("storage", onStorage);
-        return () => window.removeEventListener("storage", onStorage);
-    }, []);
+    const accessToken = localStorage.getItem("accessToken");
+    const isAuthed = Boolean(accessToken);
+    const username = isAuthed ? (decodeJwt(accessToken)?.sub || "") : "";
 
     const handleLogout = async () => {
         try {
@@ -58,7 +35,6 @@ const Navbar = () => {
             console.error("Logout error", err);
         } finally {
             clearTokens();
-            updateAuthState();
             navigate("/login", { replace: true });
         }
     };
