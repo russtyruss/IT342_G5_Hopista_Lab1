@@ -5,13 +5,14 @@
     <application
         android:allowBackup="true"
         android:label="Hopista Mobile"
-        android:theme="@style/Theme.HopistaMobile">
+        android:theme="@style/Theme.HopistaMobile"
+        android:usesCleartextTraffic="true">
 
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.RegisterActivity" />
         <activity android:name=".ui.ProfileActivity" />
         <activity android:name=".ui.DashboardActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
