@@ -40,10 +40,7 @@ const Dashboard = () => {
                     <>Welcome!</>
                 )}
             </p>
-            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-                <Link to="/profile">View Profile</Link>
-                <Link to="/login">Switch Account</Link>
-            </div>
+            
             <hr style={{ margin: "20px 0" }} />
             <p>
                 This area is ready for backend-driven widgets (recent activity, stats,

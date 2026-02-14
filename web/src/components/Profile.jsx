@@ -110,9 +110,6 @@ const Profile = () => {
             </div>
 
             <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                <button onClick={handleRefresh} disabled={loading}>
-                    {loading ? "Refreshing..." : "Refresh Access Token"}
-                </button>
                 <button onClick={handleLogout} disabled={loading}>
                     {loading ? "Signing out..." : "Logout"}
                 </button>
