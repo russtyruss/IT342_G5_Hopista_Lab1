@@ -12,6 +12,7 @@ A simple mobile client mirroring the web app, using your Spring Boot backend.
 ## Backend
 - Expects backend at `http://localhost:8081/api`.
 - On Android emulator, host `localhost` is `10.0.2.2` (already configured).
+- Cleartext HTTP is enabled in the manifest so the app can call `http://10.0.2.2:8081/api` without HTTPS.
 
 ## Structure
 - Project: `mobile/android-kotlin-app`
@@ -20,6 +21,8 @@ A simple mobile client mirroring the web app, using your Spring Boot backend.
   - `app/src/main/java/com/example/hopista/mobile/data/ApiService.kt`
   - `app/src/main/java/com/example/hopista/mobile/data/AuthRepository.kt`
   - `app/src/main/java/com/example/hopista/mobile/ui/*Activity.kt`
+  - `app/src/main/AndroidManifest.xml`
+  - `gradle.properties`
 
 ## Build & Run
 
@@ -42,3 +45,19 @@ The APK will be in `app/build/outputs/apk/debug/`.
 ## Notes
 - Ensure the backend runs on port `8081` with CORS allowing `http://localhost:3000` (already set). For mobile emulator, CORS is not relevant, but API base URL uses `10.0.2.2`.
 - If you use a real device, replace `BASE_URL` in `ApiService.kt` to point to your PC's LAN IP (e.g., `http://192.168.1.100:8081/api/`).
+
+## Important Configuration
+- AndroidX: Enabled in `gradle.properties` (`android.useAndroidX=true`, `android.enableJetifier=true`). Required for Material/AppCompat libraries.
+- Manifest `android:exported`: Set on Main launcher activity to comply with Android 12+:
+  - In `app/src/main/AndroidManifest.xml`, `MainActivity` has `android:exported="true"` because it declares a launcher intent filter.
+- Cleartext HTTP: Manifest includes `android:usesCleartextTraffic="true"` so the app can talk to your local backend over HTTP.
+
+## Troubleshooting
+- Plugin not found / Gradle sync issues:
+  - Ensure `settings.gradle.kts` contains `pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }` and `dependencyResolutionManagement` with `google()` + `mavenCentral()`.
+- Error: `android.useAndroidX` not enabled:
+  - Add `android.useAndroidX=true` and `android.enableJetifier=true` to `gradle.properties`.
+- Error: `android:exported needs to be explicitly specified`:
+  - Add `android:exported="true"` to your launcher `activity` when it has an `intent-filter`.
+- Emulator cannot reach backend:
+  - Use `10.0.2.2` for emulator, or your PC LAN IP for a physical device. Ensure Windows Firewall allows Java (Spring Boot) to listen on `8081`.
